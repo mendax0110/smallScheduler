@@ -22,20 +22,20 @@ namespace TaskBase
         explicit Task(std::function<void()> routine);
 
         void execute();
-        void addDependency(const TaskPtr& task);
-        void addSubscriber(const TaskPtr& task);
+        void addDep(const TaskPtr& task);
+        void addSubs(const TaskPtr& task);
         bool isTaskReady() const;
         void waitForTaskReady();
+        void notifyTaskFinished(const TaskPtr& task);
 
     private:
         std::function<void()> _routine;
         std::vector<TaskPtr> _dependencies;
         std::vector<TaskPtr> _subscribers;
-        std::atomic<unsigned int> _unfulfilledDependencies {0};
+        std::atomic<unsigned int> _unfulfilledDependencies {1};
         std::mutex _lock;
         std::condition_variable _waitReady;
 
-        void notifyTaskFinished(const TaskPtr& task);
     };
 }
 

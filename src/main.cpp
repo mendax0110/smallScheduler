@@ -21,11 +21,12 @@ void addTask(Schedule::Scheduler& scheduler)
 
 void menu()
 {
-    std::string menu = "1. Add task\n"
+    string menu = "1. Add task\n"
                        "2. Schedule task after\n"
                        "3. Schedule task periodically\n"
-                       "4. Wait for scheduler completion\n"
-                       "5. Exit\n";
+                       "4. Execute tasks\n"
+                       "5. Wait for scheduler completion\n"
+                       "6. Exit\n";
     cout << menu;
 }
 
@@ -72,14 +73,18 @@ int main()
                 }
                 break;
             case 4:
+                scheduler.getTasks().back()->execute();
+                scheduler.getTasks().back()->notifyTaskFinished(scheduler.getTasks().back());
+                break;
+            case 5:
                 scheduler.waitForSchedulerCompletion();
                 cout << "Scheduler finished" << endl;
                 break;
-            case 5:
+            case 6:
                 cout << "Exiting..." << endl;
                 break;
             default:
                 cout << "Invalid choice" << endl;
         }
-    } while (choice != 5);
+    } while (choice != 6);
 }

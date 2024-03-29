@@ -3,17 +3,18 @@
 
 using namespace Schedule;
 using namespace TaskBase;
+using namespace std;
 
 void Scheduler::addTask(TaskBase::TaskPtr task)
 {
-    std::lock_guard<std::mutex> lock(_lock);
+    lock_guard<mutex> lock(_lock);
     _tasks.push_back(task);
     _pendingTasks++;
 }
 
 void Scheduler::scheduleTaskAfter(TaskBase::TaskPtr task, unsigned int milliseconds)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+    this_thread::sleep_for(chrono::milliseconds(milliseconds));
     addTask(task);
 }
 
@@ -21,7 +22,7 @@ void Scheduler::scheduleTaskPeriodically(TaskBase::TaskPtr task, unsigned int mi
 {
     for (unsigned int i = 0; i < limit; ++i)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+        this_thread::sleep_for(chrono::milliseconds(milliseconds));
         addTask(task);
     }
 }
@@ -31,24 +32,28 @@ bool Scheduler::isSchedulerFinished() const
     bool finished = _pendingTasks == 0;
 
     if (finished)
-        std::cout << "Scheduler finished: " << _pendingTasks << std::endl;
+    {
+        cout << "Scheduler finished: " << _pendingTasks << endl;
+        return finished;
+    }
     else
-        std::cout << "Scheduler not finished: " << _pendingTasks << std::endl;
-
-    return finished;
+    {
+        cout << "Scheduler not finished: " << _pendingTasks << endl;
+        return false;
+    }
 }
 
 void Scheduler::waitForSchedulerCompletion()
 {
-    std::unique_lock<std::mutex> lock(_lock);
-    std::cout << "Waiting for scheduler completion" << std::endl;
+    unique_lock<mutex> lock(_lock);
+    cout << "Waiting for scheduler completion" << endl;
     _waitForCompletion.wait(lock, [this] { return isSchedulerFinished(); });
-    std::cout << "Scheduler completed" << std::endl;
+    cout << "Scheduler completed" << endl;
 }
 
 void Scheduler::notifyTaskCompletion(TaskBase::TaskPtr task)
 {
-    std::lock_guard<std::mutex> lock(_lock);
+    lock_guard<mutex> lock(_lock);
     _pendingTasks--;
     if (isSchedulerFinished())
     {
@@ -58,6 +63,6 @@ void Scheduler::notifyTaskCompletion(TaskBase::TaskPtr task)
 
 std::vector<TaskBase::TaskPtr> Scheduler::getTasks()
 {
-    std::lock_guard<std::mutex> lock(_lock);
+    lock_guard<mutex> lock(_lock);
     return _tasks;
 }
