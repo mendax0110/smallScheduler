@@ -14,10 +14,11 @@ namespace Schedule
     class Scheduler
     {
     public:
+        Scheduler();
         void addTask(TaskBase::TaskPtr task);
         void scheduleTaskAfter(TaskBase::TaskPtr task, unsigned int milliseconds);
         void scheduleTaskPeriodically(TaskBase::TaskPtr task, unsigned int milliseconds, unsigned int limit);
-        bool isSchedulerFinished() const;
+        bool isSchedulerFinished();
         void waitForSchedulerCompletion();
         std::vector<TaskBase::TaskPtr> getTasks();
 

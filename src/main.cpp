@@ -74,7 +74,7 @@ int main()
                 break;
             case 4:
                 scheduler.getTasks().back()->execute();
-                scheduler.getTasks().back()->notifyTaskFinished(scheduler.getTasks().back());
+                cout << "Task executed" << endl;
                 break;
             case 5:
                 scheduler.waitForSchedulerCompletion();
@@ -86,5 +86,5 @@ int main()
             default:
                 cout << "Invalid choice" << endl;
         }
-    } while (choice != 6);
+    } while (choice != 5);
 }
